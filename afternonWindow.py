@@ -1,3 +1,5 @@
+import random
+
 import arcade
 
 WINDOW_WIDTH = 1536
@@ -25,8 +27,8 @@ class FirstWindow(arcade.Window):
         self.player.center_x = 100
         self.player.center_y = 200
         self.target = arcade.Sprite(":resources:images/enemies/fly.png")
-        self.target.center_x = 1000
-        self.target.center_y = 800
+        self.target.center_x = random.randint(0, WINDOW_WIDTH)
+        self.target.center_y = random.randint(WINDOW_HEIGHT/2, WINDOW_HEIGHT)
         self.ground = make_grass()
 
     def on_update(self, delta_time):
