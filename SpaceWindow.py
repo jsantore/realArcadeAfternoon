@@ -14,6 +14,7 @@ class SpaceWindow(arcade.Window):
         self.ouch = False
         self.hit_sound = None
         self.lives = 5
+        self.shots = arcade.SpriteList()
 
     def setup(self):
         self.player = arcade.Sprite("Blue-05.png")
@@ -42,6 +43,11 @@ class SpaceWindow(arcade.Window):
             self.dx = 0
         elif symbol == arcade.key.RIGHT:
             self.dx = 0
+        if symbol == arcade.key.SPACE:
+            new_shot = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
+            new_shot.center_y = self.player.center_y
+            new_shot.center_x = self.player.center_x+new_shot.width
+            self.shots.append(new_shot)
 
     def on_update(self, delta_time: float):
         if self.lives <=0:
@@ -60,6 +66,10 @@ class SpaceWindow(arcade.Window):
             rock.center_x -=2
             if rock.center_x <= -rock.width/2:
                 rock.center_x = WINDOW_WIDTH+64
+        for shot in self.shots:
+            shot.center_x +=2
+            if shot.center_x > WINDOW_WIDTH:
+                self.shots.remove(shot)
         if arcade.check_for_collision_with_list(self.player, self.rocks):
             self.ouch = True
             self.lives -=1
@@ -71,6 +81,7 @@ class SpaceWindow(arcade.Window):
         arcade.start_render()
         self.player.draw()
         self.rocks.draw()
+        self.shots.draw()
         if self.lives <=0:
             message = arcade.Text("GAME OVER", WINDOW_WIDTH/3, WINDOW_HEIGHT*.75, arcade.color.YELLOW, 30)
             message.draw()
