@@ -10,9 +10,10 @@ class SpaceWindow(arcade.Window):
         self.player:arcade.Sprite = None
         self.rocks = None
         self.dy = 0
+        self.dx = 0
         self.ouch = False
         self.hit_sound = None
-
+        self.lives = 5
 
     def setup(self):
         self.player = arcade.Sprite("Blue-05.png")
@@ -27,25 +28,41 @@ class SpaceWindow(arcade.Window):
             self.dy = -2
         elif symbol == arcade.key.UP:
             self.dy = 2
+        if symbol == arcade.key.LEFT:
+            self.dx = -2
+        elif symbol == arcade.key.RIGHT:
+            self.dx = 2
 
     def on_key_release(self, symbol, modifiers):
         if symbol == arcade.key.UP:
             self.dy = 0
         elif symbol == arcade.key.DOWN:
             self.dy = 0
+        if symbol == arcade.key.LEFT:
+            self.dx = 0
+        elif symbol == arcade.key.RIGHT:
+            self.dx = 0
 
     def on_update(self, delta_time: float):
+        if self.lives <=0:
+            return
         self.player.center_y +=self.dy
         if self.player.center_y >=WINDOW_HEIGHT:
             self.player.center_y = WINDOW_HEIGHT
         elif self.player.center_y <= 0:
             self.player.center_y = 0
+        self.player.center_x += self.dx
+        if self.player.center_x >= WINDOW_WIDTH:
+            self.player.center_x = WINDOW_WIDTH
+        elif self.player.center_x <= 0:
+            self.player.center_x = 0
         for rock in self.rocks:
             rock.center_x -=2
             if rock.center_x <= -rock.width/2:
                 rock.center_x = WINDOW_WIDTH+64
         if arcade.check_for_collision_with_list(self.player, self.rocks):
             self.ouch = True
+            self.lives -=1
             arcade.play_sound(self.hit_sound)
             self.player.center_y = random.randint(self.player.height, WINDOW_HEIGHT)
 
@@ -54,8 +71,8 @@ class SpaceWindow(arcade.Window):
         arcade.start_render()
         self.player.draw()
         self.rocks.draw()
-        if self.ouch:
-            message = arcade.Text("OUCH!!!", WINDOW_WIDTH/3, WINDOW_HEIGHT*.75, arcade.color.YELLOW, 30)
+        if self.lives <=0:
+            message = arcade.Text("GAME OVER", WINDOW_WIDTH/3, WINDOW_HEIGHT*.75, arcade.color.YELLOW, 30)
             message.draw()
             self.ouch = False
         arcade.finish_render()
