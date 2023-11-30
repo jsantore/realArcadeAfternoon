@@ -1,3 +1,5 @@
+import random
+
 import arcade
 from SpaceHelpers import WINDOW_WIDTH
 from SpaceHelpers import WINDOW_HEIGHT
@@ -9,6 +11,8 @@ class SpaceWindow(arcade.Window):
         self.rocks = None
         self.dy = 0
         self.ouch = False
+        self.hit_sound = None
+
 
     def setup(self):
         self.player = arcade.Sprite("Blue-05.png")
@@ -16,6 +20,7 @@ class SpaceWindow(arcade.Window):
         self.player.center_x = 100
         self.player.center_y = WINDOW_HEIGHT/2
         self.rocks = SpaceHelpers.make_rocks()
+        self.hit_sound = arcade.load_sound(":resources:sounds/hurt1.wav")
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.DOWN:
@@ -41,6 +46,8 @@ class SpaceWindow(arcade.Window):
                 rock.center_x = WINDOW_WIDTH+64
         if arcade.check_for_collision_with_list(self.player, self.rocks):
             self.ouch = True
+            arcade.play_sound(self.hit_sound)
+            self.player.center_y = random.randint(self.player.height, WINDOW_HEIGHT)
 
 
     def on_draw(self):
