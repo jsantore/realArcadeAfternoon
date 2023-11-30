@@ -75,6 +75,11 @@ class SpaceWindow(arcade.Window):
             self.lives -=1
             arcade.play_sound(self.hit_sound)
             self.player.center_y = random.randint(self.player.height, WINDOW_HEIGHT)
+        for shot in self.shots:
+            hit_rocks = arcade.check_for_collision_with_list(shot, self.rocks)
+            if hit_rocks:
+                self.shots.remove(shot)
+                self.rocks.remove(hit_rocks[0])
 
 
     def on_draw(self):
